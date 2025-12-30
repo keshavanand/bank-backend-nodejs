@@ -1,9 +1,5 @@
 import UserModel from "../models/user.js";
 
-const registerUser = async (user) => {
-    return await UserModel.create(user);
-};
-
 const getUserById = async(id)=>{
   return await UserModel.findById(id).exec();  
 }
@@ -23,6 +19,6 @@ const deleteUser = async(id)=>{
     return await UserModel.findByIdAndDelete(id);
 }
 
-const userService = { registerUser, getUserById, updateUser,deleteUser };
+const userService = {getUserById, updateUser,deleteUser };
 
 export default userService;

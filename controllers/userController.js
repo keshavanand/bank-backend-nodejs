@@ -1,31 +1,8 @@
 import userService from "../services/userService.js";
 import validateObjectId from "../utils/validators.js"
 
-const registerUser = async (req, res) => {
-    try {
-        const user = await userService.registerUser(req.body);
-
-        return res.status(201).json({
-            success: true,
-            message: "User registered successfully",
-            user
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Internal Server Error"
-        });
-    }
-};
-
-const loginUser = async (req,res)=>{
-
-}
-
 const getUserById = async (req, res) => {
-    const { id } = req.params;
-
+    const id = req.user.id;
     if (!validateObjectId(id)) {
         return res.status(400).json({
             success: false,
@@ -49,6 +26,7 @@ const getUserById = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             success: false,
             message: error.message || "Internal Server Error"
@@ -57,7 +35,7 @@ const getUserById = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-    const { id } = req.params;
+    const id = req.user.id;
 
     if (!validateObjectId(id)) {
         return res.status(400).json({
@@ -83,6 +61,7 @@ const updateUser = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             success: false,
             message: error.message || "Internal Server Error"
@@ -91,7 +70,7 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-    const {id} = req.params;
+    const id = req.user.id;
 
     if(!validateObjectId(id)){
          return res.status(400).json({
@@ -100,22 +79,19 @@ const deleteUser = async (req, res) => {
         });
     }
     try{
-        const user = await userService.getUserById(id);
-
+        const user = await userService.deleteUser(id);
         if(!user){
             return res.status(404).json({
                 success: false,
                 message: "User not found"
             });
         }
-
-        await userService.deleteUser(id);
-
         return res.status(200).json({
             success: true,
             message: `User ${user.name} deleted successfully`
         })
     }catch(error){
+        console.log(error);
         return res.status(500).json({
                     success: false,
                     message: error.message || "Internal Server Error"
@@ -125,4 +101,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-export { registerUser, loginUser, getUserById, updateUser, deleteUser };
+export {getUserById, updateUser, deleteUser};

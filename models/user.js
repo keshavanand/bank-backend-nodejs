@@ -3,7 +3,7 @@ import { Schema } from "mongoose";
 import validator from "validator";
 
 const userSchema = new Schema({
-    name:{
+    username:{
         type: String,
         required: [true, "Name is requires"],
         minLength: [4,"Minmum length is 4"],
@@ -22,6 +22,15 @@ const userSchema = new Schema({
             message: "Pleas enter a valid email address"
         }
     },
+    password: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
+    }
 },{timestamps:true})
 
 const UserModel = mongoose.model("User",userSchema);
