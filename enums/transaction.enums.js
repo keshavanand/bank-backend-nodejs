@@ -1,0 +1,11 @@
+export const TRANSACTION_TYPE = {
+    WITHDRAW: "WITHDRAW",
+    DEPOSIT: "DEPOSIT",
+    TRANSFER: "TRANSFER"
+};
+
+export const TRANSACTION_STATUS = {
+    PENDING: "PENDING",
+    SUCCESS: "SUCCESS",
+    FAILED: "FAILED"
+};
