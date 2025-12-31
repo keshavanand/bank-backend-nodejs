@@ -15,6 +15,37 @@ const deposit = async(account,amount,session)=>{
 
     await transaction.save({session});
 }
+const withdraw = async(account,amount,session)=>{
+    await accountService.updateBalance(account._id,-amount,session,true);
+    const transaction = new TransactionModel({
+        fromAccount: account._id,
+        type:  TRANSACTION_TYPE.WITHDRAW,
+        amount: amount,
+        status: TRANSACTION_STATUS.SUCCESS
+    })
 
-const transactionService = {deposit}
+    await transaction.save();
+}
+const transfer = async(fromAccountId,toAccountId,amount,session)=>{
+    await accountService.updateBalance(fromAccountId,-amount,session)
+    await accountService.updateBalance(toAccountId,amount,session)
+
+    const transaction = new TransactionModel({
+        fromAccount: fromAccountId,
+        toAccount: toAccountId,
+        type: TRANSACTION_TYPE.TRANSFER,
+        amount: amount,
+        status: TRANSACTION_STATUS.SUCCESS
+    })
+    await transaction.save();
+}
+const getAllTransactions = async(accountId)=>{
+    return await TransactionModel.find({
+       $or:[
+        {fromAccount: accountId},
+        {toAccount: accountId}
+       ]
+    }).sort({createdAt:-1})
+}
+const transactionService = {deposit, withdraw,transfer, getAllTransactions}
 export default transactionService;
