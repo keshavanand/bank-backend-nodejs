@@ -18,13 +18,22 @@ const getAllAccounts = async (userId) => {
     .lean();
 };
 
-const getAccountById = async (accountId) => {
-    return await AccountModel.findById(accountId,{_id:1,balance:1});
+const getAccountById = async (accountId,session) => {
+    return await AccountModel.findById(accountId,{_id:1,balance:1}).session(session);
 }
 
 const deleteAccount = async(accountId)=>{
     return await AccountModel.findByIdAndDelete(accountId);
 }
-const accountService = {createAccount,getAllAccounts,getAccountById,deleteAccount}
+
+const updateBalance = async(id,amount,session)=>{
+    await AccountModel.findOneAndUpdate(
+        { _id: id },
+        { $inc: { balance: amount } },
+        { new: true, session }
+    );
+
+}
+const accountService = {createAccount,getAllAccounts,getAccountById,deleteAccount, updateBalance}
 
 export default accountService

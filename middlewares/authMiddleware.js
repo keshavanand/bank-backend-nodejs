@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import userService from "../services/userService.js"
 
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -14,8 +15,17 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        req.user = decoded;
-        next();
+        const user = userService.getUserById(decoded.id);
+        if(!user){
+            res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        }else{
+            req.user = decoded;
+            next();
+        }
+        
     } catch (error) {
         return res.status(401).json({
             success: false,
