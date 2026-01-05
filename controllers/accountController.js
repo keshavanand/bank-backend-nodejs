@@ -9,7 +9,7 @@ const createAccount = async(req,res)=>{
     if(!user) throw new AppError("User not found",203)
     
     const createdAccount = accountService.createAccount(user);
-    if(createAccount){
+    if(createdAccount){
         return res.status(201).json({
             success: true,
             message: "Account created."

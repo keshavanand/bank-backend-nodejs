@@ -12,6 +12,7 @@ import logger from "./logger/logger.js";
 configDotenv();
 connectDb();
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT
 const app = express();
 

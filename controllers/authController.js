@@ -41,6 +41,7 @@ const login = async (req,res)=>{
         username: user.username,
         role: user.role
         },
+        // eslint-disable-next-line no-undef
         process.env.JWT_SECRET_KEY,
     {
         expiresIn: "15m"

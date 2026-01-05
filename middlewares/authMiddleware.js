@@ -14,6 +14,7 @@ const authMiddleware = (req, res, next) => {
     const token = authHeader.split(" ")[1];
 
     try {
+        // eslint-disable-next-line no-undef
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const user = userService.getUserById(decoded.id);
         if(!user){
