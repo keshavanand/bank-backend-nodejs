@@ -6,6 +6,7 @@ import accountRouter from "./routes/accountRoutes.js";
 import transactionRouter from "./routes/transactionRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
+import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
 
 configDotenv();
 connectDb();
@@ -19,6 +20,8 @@ app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/users",authMiddleware, userRoute)
 app.use("/api/v1/accounts",authMiddleware, accountRouter)
 app.use("/api/v1/transactions",authMiddleware, transactionRouter)
+
+app.use(errorHandlerMiddleware)
 
 app.listen(PORT,()=>{
     console.log(`Server Starterd at ${PORT}`)

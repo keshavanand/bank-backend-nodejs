@@ -24,15 +24,6 @@ const deposit = async(req,res)=>{
             success: true,
             message: `Transaction Completed. $${amount} succesfully deposited in the account`
         })
-
-    }catch (error) {
-        console.error("Transfer Error:", error);
-        
-        const statusCode = error.statusCode || 500;
-        return res.status(statusCode).json({ 
-            success: false, 
-            message: error.message || "Internal server error" 
-        });
     } finally {
         await session.endSession();
     }
@@ -61,15 +52,6 @@ const withdraw = async(req,res)=>{
             success: true,
             message: `Transaction Completed. $${amount} succesfully withdrawn.`
         })
-
-    }catch (error) {
-        console.error("Transfer Error:", error);
-        
-        const statusCode = error.statusCode || 500;
-        return res.status(statusCode).json({ 
-            success: false, 
-            message: error.message || "Internal server error" 
-        });
     } finally {
         await session.endSession();
     }
@@ -102,42 +84,25 @@ const transfer = async(req,res)=>{
             success: true,
             message: `Transaction Completed. $${amount} succesfully transfered.`
         })
-
-    }catch (error) {
-        console.error("Transfer Error:", error);
-        
-        const statusCode = error.statusCode || 500;
-        return res.status(statusCode).json({ 
-            success: false, 
-            message: error.message || "Internal server error" 
-        });
     } finally {
         await session.endSession();
     }
 }
 const getAllTransactions = async(req,res)=>{
-      try{
-        const accountId =req.params.accountId
+  
+    const accountId =req.params.accountId
 
-        if(!validateObjectId(accountId)) throw new AppError("Inavlid Account ID.",400)
-        
-        const account = await accountService.getAccountById(accountId);
-        if(req.user.id !== account.user.toString()) throw new AppError("Not Authorized to make transaction on this account", 403);
+    if(!validateObjectId(accountId)) throw new AppError("Inavlid Account ID.",400)
+    
+    const account = await accountService.getAccountById(accountId);
+    if(req.user.id !== account.user.toString()) throw new AppError("Not Authorized to make transaction on this account", 403);
 
-        const transactions = await transactionService.getAllTransactions(accountId);
+    const transactions = await transactionService.getAllTransactions(accountId);
 
-        return res.status(200).json({
-            success: true,
-            data: transactions
-        })
-
-      }catch(error){
-        console.log(error)
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
-      }
+    return res.status(200).json({
+        success: true,
+        data: transactions
+    })
 }
 
 export {deposit,withdraw,transfer,getAllTransactions};

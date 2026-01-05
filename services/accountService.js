@@ -1,4 +1,3 @@
-import { withdraw } from "../controllers/transactionController.js";
 import AccountModel from "../models/account.js"
 
 const createAccount = async (user) => {
