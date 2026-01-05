@@ -9,6 +9,8 @@ import authMiddleware from "./middlewares/authMiddleware.js";
 import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
 import morgan from "morgan";
 import logger from "./logger/logger.js";
+import { swaggerUi, swaggerDocument } from "./swagger/swagger.js";
+
 configDotenv();
 connectDb();
 
@@ -18,6 +20,12 @@ const app = express();
 
 app.use(express.json());
 app.use(morgan('dev'))
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
 
 app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/users",authMiddleware, userRoute)
