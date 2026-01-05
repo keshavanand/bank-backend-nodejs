@@ -1,5 +1,6 @@
+import logger from "../logger/logger.js";
 const errorHandlerMiddleware = (err,req,res,next)=>{
-        console.error("Transfer Error:", err.status_code ? err.message : err);
+        logger.error(`Transfer Error:, ${err.status_code ? err.message : err}`);
         
         const statusCode = err.status_code || 500;
         res.status(statusCode).json({ 

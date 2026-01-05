@@ -7,7 +7,8 @@ import transactionRouter from "./routes/transactionRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
-
+import morgan from "morgan";
+import logger from "./logger/logger.js";
 configDotenv();
 connectDb();
 
@@ -15,6 +16,7 @@ const PORT = process.env.PORT
 const app = express();
 
 app.use(express.json());
+app.use(morgan('dev'))
 
 app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/users",authMiddleware, userRoute)
@@ -24,5 +26,5 @@ app.use("/api/v1/transactions",authMiddleware, transactionRouter)
 app.use(errorHandlerMiddleware)
 
 app.listen(PORT,()=>{
-    console.log(`Server Starterd at ${PORT}`)
+    logger.info(`Server Starterd at ${PORT}`)
 })
