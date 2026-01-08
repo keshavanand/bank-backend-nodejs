@@ -1,8 +1,9 @@
 import AccountModel from "../models/account.js"
 
-const createAccount = async (user) => {
+const createAccount = async (user,currency) => {
     const account = new AccountModel({
-        user: user
+        user: user,
+        currency: currency
     })   
     
     await account.save();
@@ -12,7 +13,7 @@ const createAccount = async (user) => {
 const getAllAccounts = async (userId) => {
     return await AccountModel.find(
         { user: userId },
-        {_id:1,balance:1}
+        {_id:1,balance:1,currency:1}
     )
     .populate("user", "username")
     .lean();
