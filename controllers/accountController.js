@@ -2,13 +2,15 @@ import accountService from "../services/accountService.js"
 import userService from "../services/userService.js"
 import validateObjectId from "../utils/validators.js"
 import AppError from "../errorHandlers/appError.js"
+import {isValidCurrency} from "../enums/account.enums.js"
 const createAccount = async(req,res)=>{
-    
+    if(req.body?.currency && !isValidCurrency(req.body?.currency)) throw new AppError("Invalid Currency Type",400);
+
     const userId = req.user.id
     const user = await userService.getUserById(userId)
     if(!user) throw new AppError("User not found",203)
     
-    const createdAccount = accountService.createAccount(user);
+    const createdAccount = accountService.createAccount(user,req.body?.currency || 'CAD');
     if(createdAccount){
         return res.status(201).json({
             success: true,

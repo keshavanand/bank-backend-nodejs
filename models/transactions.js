@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import { TRANSACTION_TYPE, TRANSACTION_STATUS } from "../enums/transaction.enums.js";
+import { CURRENCY_ENUM } from "../enums/account.enums.js";
 
 const transactionSchema = new Schema(
 {
@@ -41,6 +42,12 @@ const transactionSchema = new Schema(
         required: true,
         enum: Object.values(TRANSACTION_STATUS),
         default: TRANSACTION_STATUS.PENDING
+    },
+    currency:{
+            type: String,
+            required: true,
+            enum: Object.values(CURRENCY_ENUM),
+            default: CURRENCY_ENUM.CAD
     }
 },
 { timestamps: true }

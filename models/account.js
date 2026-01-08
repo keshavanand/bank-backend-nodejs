@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
+import { CURRENCY_ENUM } from "../enums/account.enums.js";
 
 const accountSchema = new Schema({
     balance:{
@@ -11,6 +12,12 @@ const accountSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    currency:{
+        type: String,
+        required: true,
+        enum: Object.values(CURRENCY_ENUM),
+        default: CURRENCY_ENUM.CAD
     }
 },
   { timestamps: true }

@@ -1,6 +1,7 @@
 import validateObjectId from "../utils/validators.js";
 import transactionService from "../services/transactionService.js"
 import accountService from "../services/accountService.js"
+import currencyService from "../services/currencyService.js"
 import mongoose from "mongoose";
 import AppError from "../errorHandlers/appError.js";
 const deposit = async(req,res)=>{
@@ -105,4 +106,42 @@ const getAllTransactions = async(req,res)=>{
     })
 }
 
-export {deposit,withdraw,transfer,getAllTransactions};
+const transferInternational = async(req,res)=>{
+    const session = await mongoose.startSession();
+    let message;
+    try{
+        const {fromAccountId,toAccountId, amount} = req.body;
+
+        if(amount<=0) throw new AppError("Invalid Amount",400);
+      
+        if(!validateObjectId(fromAccountId) || !validateObjectId(toAccountId)) throw new AppError("Invalid account ID",400);
+
+        await session.withTransaction(async()=>{
+            const accounts = await accountService.getAccounts(fromAccountId,toAccountId,session);
+            if (accounts.length !== 2) throw new AppError("Account not found", 404);
+
+            const fromAccount = accounts.find(a=>a._id.equals(fromAccountId))
+            const toAccount = accounts.find(a=>a._id.equals(toAccountId))
+            if(req.user.id!== fromAccount.user.toString()) throw new AppError("Not Authorized to make transaction on this account", 403);
+        
+            if(fromAccount.balance < amount) throw new AppError("Not Enough Balance", 400);
+
+            if(fromAccount.currency === toAccount.currency){
+                await transactionService.transfer(fromAccountId,toAccountId, amount, fromAccount.currency,session);
+            }else{
+                const depositAmount = await currencyService.exchange(amount, fromAccount.currency, toAccount.currency);
+                await transactionService.transferInternational(fromAccountId,toAccountId,amount,depositAmount,fromAccount.currency,session);
+            }
+            message = `Transaction Completed. ${fromAccount.currency} ${amount} succesfully transfered.`
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: message
+        })
+    } finally {
+        await session.endSession();
+    }
+}
+
+export {deposit,withdraw,transfer,getAllTransactions, transferInternational};

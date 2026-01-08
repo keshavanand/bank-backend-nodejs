@@ -9,7 +9,8 @@ const deposit = async(account,amount,session)=>{
         toAccount: account._id,
         type: TRANSACTION_TYPE.DEPOSIT,
         amount: amount,
-        status: TRANSACTION_STATUS.SUCCESS
+        status: TRANSACTION_STATUS.SUCCESS,
+        currency: account.currency
     })
 
     await transaction.save({session});
@@ -20,12 +21,13 @@ const withdraw = async(account,amount,session)=>{
         fromAccount: account._id,
         type:  TRANSACTION_TYPE.WITHDRAW,
         amount: amount,
-        status: TRANSACTION_STATUS.SUCCESS
+        status: TRANSACTION_STATUS.SUCCESS,
+        currency: account.currency
     })
 
     await transaction.save();
 }
-const transfer = async(fromAccountId,toAccountId,amount,session)=>{
+const transfer = async(fromAccountId,toAccountId,amount,currency,session)=>{
     await accountService.updateBalance(fromAccountId,-amount,session)
     await accountService.updateBalance(toAccountId,amount,session)
 
@@ -34,7 +36,8 @@ const transfer = async(fromAccountId,toAccountId,amount,session)=>{
         toAccount: toAccountId,
         type: TRANSACTION_TYPE.TRANSFER,
         amount: amount,
-        status: TRANSACTION_STATUS.SUCCESS
+        status: TRANSACTION_STATUS.SUCCESS,
+        currency: currency
     })
     await transaction.save();
 }
@@ -46,5 +49,19 @@ const getAllTransactions = async(accountId)=>{
        ]
     }).sort({createdAt:-1})
 }
-const transactionService = {deposit, withdraw,transfer, getAllTransactions}
+const transferInternational = async(fromAccountId,toAccountId,amount,depositAmount,currency,session)=>{
+    await accountService.updateBalance(fromAccountId,-amount,session)
+    await accountService.updateBalance(toAccountId,depositAmount,session)
+
+    const transaction = new TransactionModel({
+        fromAccount: fromAccountId,
+        toAccount: toAccountId,
+        type: TRANSACTION_TYPE.TRANSFER,
+        amount: amount,
+        status: TRANSACTION_STATUS.SUCCESS,
+        currency: currency
+    })
+    await transaction.save();
+}
+const transactionService = {deposit, withdraw,transfer, getAllTransactions, transferInternational}
 export default transactionService;

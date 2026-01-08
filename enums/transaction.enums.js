@@ -5,6 +5,7 @@ export const TRANSACTION_TYPE = {
 };
 
 export const TRANSACTION_STATUS = {
+    INIATED: "INTIATED",
     PENDING: "PENDING",
     SUCCESS: "SUCCESS",
     FAILED: "FAILED"
